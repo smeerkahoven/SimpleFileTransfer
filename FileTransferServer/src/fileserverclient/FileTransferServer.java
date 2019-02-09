@@ -19,7 +19,7 @@ import java.net.Socket;
 public class FileTransferServer extends Thread {
 
     private ServerSocket ss;
-    private static final int SERVER_SOCKET = 6666 ;
+    private static final int SERVER_SOCKET = 6666;
 
     public FileTransferServer(int port) {
         try {
@@ -53,7 +53,7 @@ public class FileTransferServer extends Thread {
             FileOutputStream fos = new FileOutputStream(filename);
             byte[] buffer = new byte[4096];
 
-            System.out.println("Transfiriendo: %s".replace("%s",filename));
+            System.out.println("Transfiriendo: %s".replace("%s", filename));
 
             int filesize = 15123; // Send file size in separate msg
             int read = 0;
@@ -71,8 +71,21 @@ public class FileTransferServer extends Thread {
     }
 
     public static void main(String[] args) {
-        FileTransferServer fs = new FileTransferServer(SERVER_SOCKET);
-        fs.start();
+
+        try {
+
+            if (args.length == 0) {
+                System.out.println("Debe agregar el numero del puerto : 6661 para sabre y 6662 para amadeus ");
+                System.exit(0);
+            }
+            
+            Integer socket = Integer.parseInt(args[0]);
+
+            FileTransferServer fs = new FileTransferServer(socket);
+            fs.start();
+        } catch (NumberFormatException ex) {
+            System.err.println("Debe indicar un numero de Puerto Valido");
+        }
     }
 
 }
