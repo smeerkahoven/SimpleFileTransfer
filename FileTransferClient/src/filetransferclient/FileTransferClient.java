@@ -10,6 +10,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,7 +24,7 @@ public class FileTransferClient {
 
     private Socket s;
 
-    private static final int TIME_TO_SLEEEP = 10000; // 10 minutos
+    private static final int TIME_TO_SLEEEP = 600000; // 10 minutos
     private static final String FILE_FOLDER = "/home/xeio/boletos/server/";
     private static final int SERVER_SOCKET = 6666;
     private boolean connected = false;
@@ -92,6 +95,18 @@ public class FileTransferClient {
                     System.out.println("Debe incluir una IP en el comando");
                     return;
                 }
+
+                if (args[1] == null) {
+                    System.out.println("Debe incluir un puerto 6661 para amadeus 6662 para sabre");
+                    return;
+                }
+
+                if (args[2] == null) {
+                    System.out.println("Debe incluir una carpeta por ejemplo C:/AIR");
+                    return;
+
+                }
+
                 String ipServer = args[0];
 
                 boolean isValid = FileTransferClient.validIp(ipServer);
@@ -99,20 +114,29 @@ public class FileTransferClient {
                 if (!isValid) {
                     System.out.println("La ip ingresada no es valida");
                 }
-                
-                String path = args[1];
+                int socket = Integer.parseInt(args[1]);
+
+                String path = args[2];
 
                 System.out.println("Conectandose con : %s".replace("%s", ipServer));
 
                 File folderPath = new File(path);
+                File backupFolder = new File(path+ "/backup/" );
+                
+                if (!backupFolder.exists()){
+                    backupFolder.mkdir();
+                }
 
                 for (File f : folderPath.listFiles()) {
 
-                    if (!f.isDirectory()) {
-                        FileTransferClient fc = new FileTransferClient(ipServer, SERVER_SOCKET, f);
+                    if (!f.isDirectory() && !f.getName().contains(".jar") && f.getName().contains(".bat")) {
+                        FileTransferClient fc = new FileTransferClient(ipServer, socket, f);
                         if (fc.connected) {
                             try {
                                 fc.sendFile(f);
+                                Path from = Paths.get(f.getAbsolutePath());
+                                Path to = Paths.get(backupFolder.getAbsolutePath() + "/" + f.getName());
+                                Files.move(from, to);
                             } catch (IOException ex) {
                                 Logger.getLogger(FileTransferClient.class.getName()).log(Level.SEVERE, null, ex);
                             }
