@@ -37,6 +37,7 @@ public class FileTransferClient {
             }
             //sendFile(file);
         } catch (Exception e) {
+            System.err.println("No existe conexion con el Servidor de Archivos. Inicie el Servidor");
             throw new Exception("No existe conexion con el Servidor de Archivos. Inicie el Servidor");
             //e.printStackTrace();
         }
@@ -139,6 +140,9 @@ public class FileTransferClient {
                                 Files.move(from, to);
                             } catch (IOException ex) {
                                 Logger.getLogger(FileTransferClient.class.getName()).log(Level.SEVERE, null, ex);
+                            } catch (Exception ex){
+                                System.err.println(ex.getMessage());
+                                Logger.getLogger(FileTransferClient.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
                     }
@@ -152,7 +156,7 @@ public class FileTransferClient {
                 System.exit(0);
             } catch (Exception e) {
                 System.err.println(e.getMessage());
-                System.exit(0);
+                //System.exit(0);
             }
 
         }
