@@ -129,7 +129,7 @@ public class FileTransferClient {
 
                 for (File f : folderPath.listFiles()) {
 
-                    if (!f.isDirectory() && !f.getName().contains(".jar") && f.getName().contains(".bat")) {
+                    if (!f.isDirectory() && !f.getName().contains(".jar") && !f.getName().contains(".bat")) {
                         FileTransferClient fc = new FileTransferClient(ipServer, socket, f);
                         if (fc.connected) {
                             try {
