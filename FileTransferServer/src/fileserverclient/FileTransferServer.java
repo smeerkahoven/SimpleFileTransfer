@@ -19,7 +19,6 @@ import java.net.Socket;
 public class FileTransferServer extends Thread {
 
     private ServerSocket ss;
-    private static final int SERVER_SOCKET = 6666;
 
     public FileTransferServer(int port) {
         try {

@@ -89,24 +89,30 @@ public class FileTransferClient {
     }
 
     public static void main(String[] args) {
+
+        if (args.length == 0) {
+            System.out.println("Parametros requeridos <ip> <puerto> <path archivos>");
+            return;
+        }
+
+        if (args[0] == null) {
+            System.out.println("Debe incluir una IP en el comando");
+            return;
+        }
+
+        if (args[1] == null) {
+            System.out.println("Debe incluir un puerto 6661 para amadeus 6662 para sabre");
+            return;
+        }
+
+        if (args[2] == null) {
+            System.out.println("Debe incluir una carpeta por ejemplo C:/AIR");
+            return;
+
+        }
+
         while (true) {
             try {
-
-                if (args[0] == null) {
-                    System.out.println("Debe incluir una IP en el comando");
-                    return;
-                }
-
-                if (args[1] == null) {
-                    System.out.println("Debe incluir un puerto 6661 para amadeus 6662 para sabre");
-                    return;
-                }
-
-                if (args[2] == null) {
-                    System.out.println("Debe incluir una carpeta por ejemplo C:/AIR");
-                    return;
-
-                }
 
                 String ipServer = args[0];
 
@@ -122,9 +128,9 @@ public class FileTransferClient {
                 System.out.println("Conectandose con : %s".replace("%s", ipServer));
 
                 File folderPath = new File(path);
-                File backupFolder = new File(path+ "/backup/" );
-                
-                if (!backupFolder.exists()){
+                File backupFolder = new File(path + "/backup/");
+
+                if (!backupFolder.exists()) {
                     backupFolder.mkdir();
                 }
 
@@ -137,10 +143,16 @@ public class FileTransferClient {
                                 fc.sendFile(f);
                                 Path from = Paths.get(f.getAbsolutePath());
                                 Path to = Paths.get(backupFolder.getAbsolutePath() + "/" + f.getName());
-                                Files.move(from, to);
+
+                                File moveToBackUp = new File(to.toUri());
+                                if (!moveToBackUp.exists()) {
+                                    Files.move(from, to);
+                                }else {
+                                    Files.delete(from);
+                                }
                             } catch (IOException ex) {
                                 Logger.getLogger(FileTransferClient.class.getName()).log(Level.SEVERE, null, ex);
-                            } catch (Exception ex){
+                            } catch (Exception ex) {
                                 System.err.println(ex.getMessage());
                                 Logger.getLogger(FileTransferClient.class.getName()).log(Level.SEVERE, null, ex);
                             }
